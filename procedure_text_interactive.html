@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procedure Text — Interactive Learning Media</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --or:#FF6B35; --ye:#FFD93D; --gr:#4CAF50; --bl:#2196F3;
+  --pu:#9C27B0; --re:#F44336; --pi:#E91E63;
+  --sh: 0 4px 20px rgba(0,0,0,.18);
+  --sh2: 0 8px 32px rgba(0,0,0,.22);
+}
+html,body { width:100vw; height:100vh; overflow:hidden; background:#111; font-family:'Nunito',sans-serif; }
+
+/* SCREENS */
+.sc { position:fixed; inset:0; display:none; flex-direction:column; overflow:hidden; }
+.sc.on { display:flex; }
+
+/* NAV BAR */
+.nb {
+  flex-shrink:0; height:7vh; min-height:50px; max-height:70px;
+  background:rgba(0,0,0,.58); backdrop-filter:blur(12px);
+  border-top:2px solid rgba(255,255,255,.15);
+  display:flex; align-items:center; justify-content:center;
+  gap:.9vw; padding:0 5vw; position:relative; z-index:50;
+}
+.nd {
+  width:clamp(26px,3.4vh,42px); height:clamp(26px,3.4vh,42px);
+  border-radius:50%; border:2px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.15); cursor:pointer; transition:all .3s;
+  display:flex; align-items:center; justify-content:center; font-size:clamp(11px,1.5vh,18px);
+}
+.nd.on { background:var(--ye); border-color:var(--ye); transform:scale(1.35); box-shadow:0 0 12px var(--ye); }
+.nd:hover:not(.on) { background:rgba(255,255,255,.35); transform:scale(1.1); }
+.np,.nn {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:clamp(34px,4.4vh,52px); height:clamp(34px,4.4vh,52px);
+  border-radius:50%; border:none; cursor:pointer; color:#fff;
+  font-size:clamp(14px,1.9vh,22px); font-weight:900;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .25s; box-shadow:var(--sh);
+}
+.np { left:1.4vw; background:var(--or); }
+.nn { right:1.4vw; background:var(--gr); }
+.np:hover,.nn:hover { transform:translateY(-50%) scale(1.12); }
+.nl { color:rgba(255,255,255,.7); font-size:clamp(11px,1.45vh,17px); font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+
+/* FULLSCREEN BTN */
+#fsB {
+  position:fixed; top:1.4vh; right:1.4vw; z-index:9999;
+  background:rgba(0,0,0,.55); backdrop-filter:blur(8px);
+  border:2px solid rgba(255,255,255,.3); border-radius:5vw;
+  color:#fff; padding:.45vh 1.2vw; cursor:pointer;
+  font-family:'Nunito',sans-serif; font-size:clamp(11px,1.55vh,17px); font-weight:800;
+  display:flex; align-items:center; gap:.4vw; transition:all .2s;
+}
+#fsB:hover { background:rgba(255,255,255,.2); }
+
+/* ANIMATIONS */
+@keyframes fD { from{opacity:0;transform:translateY(-2vh)} to{opacity:1;transform:none} }
+@keyframes fU { from{opacity:0;transform:translateY(2vh)}  to{opacity:1;transform:none} }
+@keyframes fl { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-1.2vh)} }
+@keyframes pp { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+@keyframes pi { 0%{transform:scale(.65);opacity:0} 80%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+.aD { animation:fD .5s ease both; }
+.aU { animation:fU .5s ease both; }
+.fl { animation:fl 3.2s ease-in-out infinite; }
+.pp { animation:pp 2.5s ease-in-out infinite; }
+
+/* FLOAT DECOS */
+.fd {
+  position:absolute; opacity:.17; pointer-events:none; user-select:none;
+  animation:fl 4s ease-in-out infinite;
+  font-size:clamp(20px,4.5vh,52px);
+}
+
+/* ============ S1 — INTRO ============ */
+#s1 { background:linear-gradient(140deg,#FF8C42,#FF6B35 38%,#E85D04 68%,#C44901); }
+#s1::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(circle at 12% 18%,rgba(255,240,80,.17) 0,transparent 42%),
+             radial-gradient(circle at 88% 80%,rgba(180,50,5,.2) 0,transparent 38%);
+}
+.s1c { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.8vh 3vw 1vh; gap:1.6vh; position:relative; z-index:1; }
+
+.brow {
+  background:rgba(255,255,255,.16); backdrop-filter:blur(10px);
+  border:2px solid rgba(255,255,255,.3); border-radius:5vw;
+  padding:.6vh 2.5vw; display:flex; gap:2vw;
+}
+.brow span { font-size:clamp(12px,1.7vh,20px); font-weight:800; color:#fff; display:flex; align-items:center; gap:.35vw; }
+.brow i    { color:rgba(255,255,255,.4); font-style:normal; }
+
+.titbox {
+  background:rgba(0,0,0,.28); backdrop-filter:blur(18px);
+  border:2.5px solid rgba(255,255,255,.3); border-radius:2.5vw;
+  padding:1.8vh 5vw; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.tsup { font-size:clamp(11px,1.6vh,18px); font-weight:800; color:#FFE082; letter-spacing:.3em; text-transform:uppercase; }
+.th1  { font-family:'Fredoka One',sans-serif; font-size:clamp(40px,8vh,90px); color:#fff; line-height:1.05; text-shadow:0 3px 18px rgba(0,0,0,.4); }
+.th1 span { color:var(--ye); }
+
+.s1g { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5vw; width:93vw; }
+.s1k { background:#fff; border-radius:clamp(10px,2vh,22px); padding:1.8vh 1.8vw; box-shadow:var(--sh2); border-top:5px solid; }
+.s1k.bl { border-top-color:var(--bl); } .s1k.gr { border-top-color:var(--gr); } .s1k.pu { border-top-color:var(--pu); }
+.s1k .ci { font-size:clamp(20px,3.5vh,42px); margin-bottom:.5vh; display:block; }
+.s1k .ct { font-family:'Fredoka One',sans-serif; font-size:clamp(13px,2vh,22px); color:#222; margin-bottom:.4vh; }
+.s1k .cx { font-size:clamp(11px,1.45vh,16px); color:#555; line-height:1.55; }
+.s1k .cx strong { color:var(--or); }
+.pill { display:inline-flex; align-items:center; gap:.3vw; background:#E8F5E9; border-radius:5vw; padding:.25vh .8vw; font-size:clamp(10px,1.25vh,14px); font-weight:700; color:#2E7D32; margin:.2vh .1vw; }
+.mr { display:flex; align-items:center; gap:.6vw; font-size:clamp(11px,1.4vh,15px); font-weight:700; color:#444; margin:.3vh 0; }
+.mn { background:var(--pu); color:#fff; border-radius:.6vh; padding:.15vh .65vw; font-size:clamp(10px,1.2vh,13px); font-weight:800; flex-shrink:0; }
+
+/* ============ S2 — MATERI ============ */
+#s2 { background:linear-gradient(140deg,#E3F2FD,#BBDEFB,#90CAF9); }
+.s2c,.s3c,.s4c,.s5c { flex:1; display:flex; flex-direction:column; align-items:center; padding:1.6vh 3vw 1vh; gap:1.2vh; overflow:hidden; }
+
+.sh { display:flex; align-items:center; gap:1.5vw; }
+.sb { font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.7vh,20px); padding:.55vh 1.8vw; border-radius:5vw; color:#fff; }
+.sh1 { font-family:'Fredoka One',sans-serif; font-size:clamp(18px,3.8vh,44px); }
+
+.twc { display:grid; grid-template-columns:1fr 1fr; gap:1.5vw; width:93vw; flex:1; min-height:0; }
+.cc {
+  background:#fff; border-radius:clamp(10px,2.2vh,24px); padding:1.6vh 1.8vw;
+  box-shadow:var(--sh2); display:flex; flex-direction:column; gap:1vh; min-height:0; overflow:hidden;
+}
+.cch { display:flex; align-items:center; gap:1.1vw; padding-bottom:1vh; border-bottom:2px solid #F0F0F0; flex-shrink:0; }
+.cco { width:clamp(36px,5vh,56px); height:clamp(36px,5vh,56px); border-radius:1.3vh; display:flex; align-items:center; justify-content:center; font-size:clamp(16px,2.4vh,28px); flex-shrink:0; }
+.cch2 { font-family:'Fredoka One',sans-serif; font-size:clamp(13px,2.2vh,24px); }
+.chs  { font-size:clamp(10px,1.25vh,14px); color:#9E9E9E; }
+
+.stl { display:flex; flex-direction:column; gap:.7vh; flex:1; }
+.sti { display:flex; align-items:flex-start; gap:.9vw; padding:.85vh 1vw; border-radius:1.3vh; }
+.stn { width:clamp(28px,3.5vh,40px); height:clamp(28px,3.5vh,40px); border-radius:.9vh; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.7vh,20px); color:#fff; }
+.stt { font-size:clamp(11px,1.55vh,18px); font-weight:800; color:#222; }
+.std { font-size:clamp(10px,1.3vh,15px); color:#666; margin-top:.2vh; line-height:1.4; }
+.ste { margin-top:.3vh; background:#fff; border-radius:.7vh; padding:.3vh .9vw; font-size:clamp(9px,1.18vh,13px); font-style:italic; color:#999; }
+
+.ll { display:flex; flex-direction:column; gap:.6vh; flex:1; }
+.li { display:flex; align-items:flex-start; gap:.8vw; padding:.85vh 1vw; border-radius:1.3vh; background:#F8F8F8; }
+.lio { font-size:clamp(14px,1.8vh,22px); flex-shrink:0; }
+.lil { font-size:clamp(11px,1.55vh,17px); font-weight:800; color:#333; }
+.lie { font-size:clamp(10px,1.25vh,14px); color:#777; font-style:italic; margin-top:.15vh; }
+.lie strong { color:var(--or); font-style:normal; }
+
+.ms { background:linear-gradient(90deg,#FFF9C4,#FFFDE7); border-radius:1.3vh; padding:1vh 1.4vw; border:2px dashed #FFD54F; flex-shrink:0; }
+.mf { display:flex; align-items:center; justify-content:center; gap:.7vw; flex-wrap:wrap; }
+.mc { color:#fff; border-radius:.9vh; padding:.4vh 1.3vw; font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.6vh,18px); }
+.ms p { text-align:center; font-size:clamp(10px,1.25vh,14px); font-weight:700; color:#795548; margin-top:.5vh; }
+.ms p span { color:var(--or); }
+
+.dt { font-size:clamp(11px,1.55vh,17px); color:#444; line-height:1.6; }
+.dt strong { color:var(--bl); font-weight:800; }
+.db { background:#E3F2FD; border-radius:1.3vh; padding:1vh 1.3vw; border-left:5px solid #1976D2; flex-shrink:0; }
+.dbh { font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.6vh,18px); color:#1565C0; margin-bottom:.5vh; }
+.tagr { display:flex; flex-wrap:wrap; gap:.5vw .4vw; }
+.tg { background:#fff; border-radius:.7vh; padding:.25vh .8vw; font-size:clamp(10px,1.25vh,14px); font-weight:700; color:#444; }
+
+/* ============ S3 — CONTOH ============ */
+#s3 { background:linear-gradient(140deg,#E8F5E9,#C8E6C9,#A5D6A7); }
+.exg { display:grid; grid-template-columns:1fr 1.05fr; gap:1.5vw; width:93vw; flex:1; min-height:0; }
+.rc,.qc { background:#fff; border-radius:clamp(10px,2.2vh,24px); padding:1.6vh 1.8vw; box-shadow:var(--sh2); display:flex; flex-direction:column; gap:.85vh; min-height:0; overflow:hidden; }
+.rtr { display:flex; align-items:center; gap:1.1vw; flex-shrink:0; }
+.re  { font-size:clamp(28px,5vh,58px); }
+.rh2 { font-family:'Fredoka One',sans-serif; font-size:clamp(14px,2.4vh,28px); color:#2E7D32; }
+.rs  { font-size:clamp(10px,1.3vh,15px); color:#999; }
+.sl  { font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.75vh,20px); margin-bottom:.4vh; display:flex; align-items:center; gap:.5vw; }
+.ir  { display:flex; gap:.5vw; flex-wrap:wrap; }
+.ic  { background:#E8F5E9; border:2px solid #A5D6A7; border-radius:5vw; padding:.3vh .9vw; font-size:clamp(10px,1.3vh,15px); font-weight:700; color:#2E7D32; }
+.stps { display:flex; flex-direction:column; gap:.45vh; }
+.si { display:flex; align-items:center; gap:.9vw; padding:.65vh 1vw; background:linear-gradient(90deg,#F1F8E9,#F9FBE7); border-radius:1.1vh; border-left:5px solid #66BB6A; }
+.sn { width:clamp(24px,2.9vh,34px); height:clamp(24px,2.9vh,34px); background:#4CAF50; border-radius:.75vh; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',sans-serif; font-size:clamp(11px,1.5vh,17px); color:#fff; }
+.stx { font-size:clamp(11px,1.45vh,16px); font-weight:600; color:#333; }
+.stx strong { color:#2E7D32; }
+.ast { background:#F0F4FF; border-radius:1.3vh; padding:.85vh 1.3vw; border:2px solid #90CAF9; flex-shrink:0; }
+.asth { font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.6vh,18px); color:#1565C0; margin-bottom:.6vh; }
+.acg { display:grid; grid-template-columns:repeat(3,1fr); gap:.5vw; }
+.ac { background:#E8EAF6; border-radius:1.1vh; padding:.65vh .8vw; text-align:center; border:2px solid #9FA8DA; }
+.acl { font-size:clamp(9px,1.05vh,12px); color:#283593; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+.acv { font-family:'Fredoka One',sans-serif; font-size:clamp(10px,1.4vh,15px); color:#1A237E; margin-top:.15vh; }
+.qh  { font-family:'Fredoka One',sans-serif; font-size:clamp(14px,2.2vh,26px); color:#1B5E20; flex-shrink:0; }
+.qhi { font-size:clamp(10px,1.3vh,15px); color:#666; background:#F1F8E9; padding:.6vh 1vw; border-radius:.9vh; flex-shrink:0; }
+.qi  { margin-bottom:.6vh; }
+.qt  { font-size:clamp(11px,1.45vh,16px); font-weight:800; color:#333; margin-bottom:.3vh; }
+.qa  { background:linear-gradient(90deg,#E8F5E9,#F1F8E9); border-radius:.9vh; padding:.6vh 1vw; font-size:clamp(10px,1.3vh,15px); color:#2E7D32; font-weight:700; border-left:5px solid #4CAF50; cursor:pointer; transition:all .3s; position:relative; overflow:hidden; }
+.qa.hid { filter:blur(5px); background:#EEE; color:transparent; border-color:#CCC; }
+.qa.hid::after { content:'👆 Klik untuk lihat jawaban'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:clamp(9px,1.2vh,14px); font-weight:800; color:#888; filter:none; }
+.ks { background:linear-gradient(135deg,#FFF9C4,#FFFDE7); border-radius:1.3vh; padding:1vh 1.3vw; border:2px dashed #FFD54F; flex:1; min-height:0; }
+.ksh { font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.7vh,19px); color:#F57F17; margin-bottom:.6vh; }
+.kis { display:flex; flex-direction:column; gap:.5vh; }
+.ki { background:#fff; border-radius:.9vh; padding:.6vh 1vw; font-size:clamp(10px,1.3vh,15px); border-left:5px solid; }
+.kil { font-weight:800; }
+.kie { color:#666; font-style:italic; margin-top:.15vh; font-size:clamp(9px,1.15vh,13px); }
+
+/* ============ S4 — QUIZ ============ */
+#s4 { background:linear-gradient(140deg,#FFF3E0,#FFE0B2,#FFCC80); }
+.qw { width:93vw; display:flex; flex-direction:column; gap:1vh; flex:1; min-height:0; }
+.pr { display:flex; align-items:center; gap:1.3vw; flex-shrink:0; }
+.pb { flex:1; height:clamp(8px,1.3vh,16px); background:rgba(0,0,0,.1); border-radius:5vh; overflow:hidden; }
+.pf { height:100%; background:linear-gradient(90deg,var(--or),var(--ye)); border-radius:5vh; transition:width .5s ease; }
+.pt { font-family:'Fredoka One',sans-serif; font-size:clamp(13px,2vh,23px); color:var(--or); min-width:6vw; }
+.sb2 { background:linear-gradient(135deg,#FFF9C4,#FFFDE7); border:2px solid var(--ye); border-radius:5vh; padding:.45vh 1.3vw; font-family:'Fredoka One',sans-serif; font-size:clamp(13px,2vh,23px); color:var(--or); display:flex; align-items:center; gap:.4vw; flex-shrink:0; }
+.qcard { background:#fff; border-radius:clamp(12px,2.4vh,28px); padding:2vh 2.5vw; box-shadow:var(--sh2); flex:1; min-height:0; display:flex; flex-direction:column; gap:1.2vh; }
+.qbg { background:linear-gradient(135deg,var(--or),#FF8C00); color:#fff; border-radius:5vh; padding:.45vh 1.6vw; font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.7vh,19px); align-self:flex-start; flex-shrink:0; }
+.qq { font-size:clamp(14px,2.2vh,26px); font-weight:800; color:#222; line-height:1.42; flex-shrink:0; white-space:pre-wrap; }
+.qos { display:grid; grid-template-columns:1fr 1fr; gap:.9vh 1.4vw; flex:1; align-content:start; }
+.qo { padding:1.2vh 1.3vw; border-radius:1.5vh; border:2.5px solid #E8E8E8; background:#FAFAFA; cursor:pointer; font-size:clamp(13px,1.75vh,20px); font-weight:700; color:#333; transition:all .22s; display:flex; align-items:center; gap:.9vw; text-align:left; }
+.qo:hover { border-color:var(--or); background:#FFF3E0; transform:translateY(-2px); }
+.qo.ok  { background:#E8F5E9; border-color:var(--gr); color:#2E7D32; }
+.qo.no  { background:#FFEBEE; border-color:var(--re); color:#C62828; }
+.qo.dis { pointer-events:none; }
+.ol { width:clamp(26px,3.2vh,38px); height:clamp(26px,3.2vh,38px); border-radius:.8vh; background:var(--or); color:#fff; font-family:'Fredoka One',sans-serif; font-size:clamp(11px,1.6vh,18px); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.qo.ok .ol { background:var(--gr); }
+.qo.no .ol { background:var(--re); }
+.qfb { padding:1vh 1.6vw; border-radius:1.3vh; font-size:clamp(12px,1.6vh,18px); font-weight:800; display:none; align-items:center; gap:.9vw; flex-shrink:0; }
+.qfb.on { display:flex; }
+.qfb.ok { background:#E8F5E9; color:#2E7D32; }
+.qfb.no { background:#FFEBEE; color:#C62828; }
+.qct { display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+.qb { padding:.9vh 2.2vw; border-radius:5vh; border:none; cursor:pointer; font-family:'Fredoka One',sans-serif; font-size:clamp(13px,1.8vh,21px); display:flex; align-items:center; gap:.5vw; transition:all .22s; }
+.qb.p { background:var(--or); color:#fff; box-shadow:0 4px 14px rgba(255,107,53,.35); }
+.qb.s { background:#F0F0F0; color:#888; }
+.qb:hover { transform:translateY(-2px); }
+.qb:disabled { opacity:.35; pointer-events:none; }
+
+/* ============ S5 — ISIAN ============ */
+#s5 { background:linear-gradient(140deg,#F3E5F5,#E1BEE7,#CE93D8); }
+.fg { display:grid; grid-template-columns:1.1fr .9fr; gap:1.5vw; width:93vw; flex:1; min-height:0; }
+.fc,.pc { background:#fff; border-radius:clamp(10px,2.2vh,24px); padding:1.6vh 1.8vw; box-shadow:var(--sh2); display:flex; flex-direction:column; gap:.9vh; min-height:0; overflow:hidden; }
+.pc { background:linear-gradient(135deg,#FCE4EC,#F8BBD9); border:2.5px dashed #F06292; }
+.fh2,.ph2 { font-family:'Fredoka One',sans-serif; font-size:clamp(14px,2.2vh,26px); flex-shrink:0; display:flex; align-items:center; gap:.7vw; }
+.fh2 { color:#6A1B9A; } .ph2 { color:#880E4F; }
+.fhi { font-size:clamp(10px,1.3vh,15px); color:#888; background:#F9F0FF; padding:.6vh 1vw; border-radius:.9vh; flex-shrink:0; }
+.fis { display:flex; flex-direction:column; gap:.65vh; flex:1; }
+.fi { display:flex; align-items:center; gap:.9vw; padding:.75vh 1vw; background:#FAFAFA; border-radius:1.3vh; }
+.fn { width:clamp(28px,3.3vh,38px); height:clamp(28px,3.3vh,38px); border-radius:.9vh; flex-shrink:0; background:linear-gradient(135deg,#9C27B0,#7B1FA2); display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.7vh,19px); color:#fff; }
+.ft { font-size:clamp(11px,1.42vh,16px); font-weight:700; color:#333; flex:1; }
+.fin { border:2.5px solid #E1BEE7; border-radius:.8vh; padding:.35vh .9vw; font-size:clamp(11px,1.35vh,15px); font-weight:700; color:#6A1B9A; width:15vw; min-width:100px; outline:none; text-align:center; transition:border .2s; font-family:'Nunito',sans-serif; }
+.fin:focus { border-color:#9C27B0; }
+.fbs { display:flex; gap:.9vw; align-items:center; flex-shrink:0; }
+.cb { background:linear-gradient(135deg,#9C27B0,#7B1FA2); color:#fff; border:none; border-radius:5vh; padding:.8vh 2.2vw; font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.75vh,20px); cursor:pointer; display:flex; align-items:center; gap:.5vw; box-shadow:0 4px 12px rgba(156,39,176,.36); transition:all .22s; }
+.cb:hover { transform:translateY(-2px); }
+.rb { background:#F0F0F0; border:none; border-radius:5vh; padding:.8vh 1.8vw; font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.75vh,20px); color:#888; cursor:pointer; transition:all .22s; }
+.rb:hover { background:#E0E0E0; }
+.fr { border-radius:1.3vh; padding:.9vh 1.3vw; font-size:clamp(10px,1.35vh,15px); font-weight:700; display:none; flex-shrink:0; line-height:1.55; }
+.fr.on { display:block; }
+.ps { font-size:clamp(12px,1.6vh,18px); font-weight:800; color:#880E4F; flex-shrink:0; }
+.pd { font-size:clamp(10px,1.3vh,15px); color:#AD1457; flex-shrink:0; }
+.cl { list-style:none; display:flex; flex-direction:column; gap:.35vh; flex-shrink:0; }
+.ci2 { display:flex; align-items:center; gap:.6vw; font-size:clamp(11px,1.38vh,15px); font-weight:700; color:#880E4F; }
+.pta { border:2.5px solid #F48FB1; border-radius:1.3vh; padding:.9vh 1.1vw; font-family:'Nunito',sans-serif; font-size:clamp(11px,1.35vh,15px); color:#333; resize:none; outline:none; transition:border .2s; background:#fff; flex:1; min-height:0; }
+.pta:focus { border-color:var(--pi); }
+.pbs { display:flex; gap:.9vw; align-items:center; flex-shrink:0; }
+.sbb { flex:1; background:linear-gradient(135deg,var(--pi),#C2185B); color:#fff; border:none; border-radius:5vh; padding:.8vh 1.8vw; font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.75vh,20px); cursor:pointer; box-shadow:0 4px 12px rgba(233,30,99,.36); transition:all .22s; }
+.sbb:hover { transform:translateY(-2px); }
+.clb { background:#F8BBD9; border:none; border-radius:5vh; padding:.8vh 1.4vw; font-family:'Fredoka One',sans-serif; font-size:clamp(12px,1.75vh,20px); color:#880E4F; cursor:pointer; transition:all .22s; }
+.clb:hover { background:#F48FB1; }
+.pf2 { border-radius:1.3vh; padding:.9vh 1.3vw; font-size:clamp(10px,1.3vh,14px); font-weight:700; display:none; flex-shrink:0; line-height:1.6; }
+.pf2.on { display:block; }
+
+/* ============ S6 — SUMMARY ============ */
+#s6 { background:linear-gradient(140deg,#1a237e,#283593,#1565C0); }
+.s6c { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2vh 4vw; gap:1.8vh; text-align:center; }
+.s6em { font-size:clamp(40px,8.5vh,100px); animation:fl 3s ease-in-out infinite; }
+.s6h1 { font-family:'Fredoka One',sans-serif; font-size:clamp(30px,6.5vh,80px); color:#fff; animation:pi .6s ease; }
+.s6h1 span { color:var(--ye); }
+.s6sb { font-size:clamp(13px,2vh,24px); color:rgba(255,255,255,.85); font-weight:700; }
+.scs  { display:flex; gap:1.8vw; justify-content:center; flex-wrap:wrap; }
+.sck  { background:rgba(255,255,255,.12); backdrop-filter:blur(10px); border:2px solid rgba(255,255,255,.2); border-radius:clamp(10px,2vh,24px); padding:1.8vh 2.5vw; min-width:16vw; text-align:center; }
+.scn  { font-family:'Fredoka One',sans-serif; font-size:clamp(26px,5vh,60px); color:var(--ye); }
+.scl  { font-size:clamp(11px,1.5vh,17px); font-weight:700; color:rgba(255,255,255,.85); margin-top:.3vh; }
+.scno { font-size:clamp(9px,1.15vh,13px); color:rgba(255,255,255,.5); margin-top:.2vh; }
+.twr  { display:flex; gap:1.3vw; justify-content:center; flex-wrap:wrap; }
+.tw   { border-radius:1.4vh; padding:.9vh 1.8vw; font-size:clamp(12px,1.6vh,18px); font-weight:800; color:#fff; display:flex; align-items:center; gap:.5vw; border:2px solid; }
+.rbs  { background:var(--ye); color:#1a1a2e; border:none; border-radius:5vh; padding:1.2vh 4.5vw; font-family:'Fredoka One',sans-serif; font-size:clamp(16px,2.4vh,30px); cursor:pointer; transition:all .25s; box-shadow:0 6px 24px rgba(255,217,61,.5); animation:pp 2.5s ease-in-out infinite; }
+.rbs:hover { transform:scale(1.06); }
+</style>
+</head>
+<body>
+
+<button id="fsB" onclick="toggleFS()">⛶ Fullscreen</button>
+
+<!-- ===== S1 INTRO ===== -->
+<div class="sc on" id="s1">
+  <div class="fd" style="top:6%;left:2%;animation-delay:0s">🍳</div>
+  <div class="fd" style="top:8%;right:4%;animation-delay:.8s;font-size:clamp(18px,3.8vh,44px)">📚</div>
+  <div class="fd" style="bottom:15%;left:5%;animation-delay:1.5s">🥄</div>
+  <div class="fd" style="bottom:17%;right:5%;animation-delay:.4s;font-size:clamp(18px,3.8vh,44px)">🎓</div>
+
+  <div class="s1c">
+    <div class="brow aD">
+      <span>📘 LKPD Interaktif</span><i>•</i>
+      <span>🏫 Bahasa Inggris</span><i>•</i>
+      <span>🎓 Kelas XI SMA</span>
+    </div>
+    <div class="titbox aD" style="animation-delay:.08s">
+      <div class="tsup">📖 Materi Pembelajaran</div>
+      <div class="th1">Procedure <span>Text</span></div>
+    </div>
+    <div class="s1g">
+      <div class="s1k bl aU" style="animation-delay:.15s">
+        <span class="ci">🎯</span>
+        <div class="ct">Tujuan Pembelajaran</div>
+        <div class="cx">Siswa dapat <strong>mengidentifikasi, menganalisis,</strong> dan <strong>menyusun</strong> procedure text dengan struktur dan fitur kebahasaan yang tepat.</div>
+      </div>
+      <div class="s1k gr aU" style="animation-delay:.25s">
+        <span class="ci">🔥</span>
+        <div class="ct">Icebreaking: Can You Guess?</div>
+        <div class="cx">Susun langkah-langkah ini dengan benar!
+          <div style="margin-top:.5vh;display:flex;flex-wrap:wrap;gap:.3vw .25vw">
+            <span class="pill">☕ Pour hot water</span>
+            <span class="pill">🥄 Add coffee powder</span>
+            <span class="pill">🌀 Stir well</span>
+            <span class="pill">☕ Serve in a cup</span>
+          </div>
+          <div style="margin-top:.6vh;font-weight:800;color:#388E3C;font-size:clamp(10px,1.3vh,15px)">❓ Apa yang sedang dilakukan? Susun urutannya!</div>
+        </div>
+      </div>
+      <div class="s1k pu aU" style="animation-delay:.35s">
+        <span class="ci">🗺️</span>
+        <div class="ct">Peta Materi</div>
+        <div class="cx" style="display:flex;flex-direction:column;gap:.35vh">
+          <div class="mr"><span class="mn">1</span>Pengertian Procedure Text</div>
+          <div class="mr"><span class="mn">2</span>Generic Structure</div>
+          <div class="mr"><span class="mn">3</span>Language Features</div>
+          <div class="mr"><span class="mn">4</span>Contoh &amp; Latihan Soal</div>
+          <div class="mr"><span class="mn">5</span>Mini Project Kreatif</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nb">
+    <span class="nl">Halaman 1 dari 6</span>
+    <div id="d1" style="display:flex;gap:.8vw"></div>
+    <button class="nn" onclick="go(2)">▶</button>
+  </div>
+</div>
+
+
+<!-- ===== S2 MATERI ===== -->
+<div class="sc" id="s2">
+  <div class="fd" style="top:5%;left:1.5%;opacity:.15">📖</div>
+  <div class="fd" style="bottom:12%;right:2%;opacity:.15">🧩</div>
+  <div class="s2c">
+    <div class="sh aD">
+      <span class="sb" style="background:linear-gradient(135deg,#1565C0,#1976D2)">📖 MATERI</span>
+      <div class="sh1" style="color:#1565C0">Concept Building: Procedure Text</div>
+    </div>
+    <div class="twc">
+      <!-- LEFT -->
+      <div class="cc aU">
+        <div class="cch">
+          <div class="cco" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB)">🧩</div>
+          <div><div class="cch2" style="color:#1565C0">A. Pengertian Procedure Text</div><div class="chs">Definition</div></div>
+        </div>
+        <div class="dt">Procedure text adalah jenis teks yang bertujuan untuk menjelaskan <strong>cara melakukan sesuatu</strong> melalui langkah-langkah yang <strong>sistematis dan berurutan</strong>.</div>
+        <div class="db">
+          <div class="dbh">💡 Contoh Procedure Text:</div>
+          <div class="tagr">
+            <span class="tg">🍜 Resep masakan</span>
+            <span class="tg">🔧 Panduan merakit</span>
+            <span class="tg">💻 Tutorial software</span>
+            <span class="tg">🌿 Cara membuat</span>
+          </div>
+        </div>
+        <div class="cch" style="border-top:2px solid #F0F0F0;padding-top:1vh;margin-top:.2vh;border-bottom:none;padding-bottom:0">
+          <div class="cco" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9)">🧠</div>
+          <div><div class="cch2" style="color:#2E7D32">C. Language Features</div><div class="chs">Ciri Kebahasaan</div></div>
+        </div>
+        <ul class="ll">
+          <li class="li" style="background:#E8F5E9"><span class="lio">📌</span><div><div class="lil" style="color:#2E7D32">Imperative Sentences</div><div class="lie">→ <strong>Mix</strong> the ingredients! / <strong>Boil</strong> the water!</div></div></li>
+          <li class="li" style="background:#FFF3E0"><span class="lio">⚡</span><div><div class="lil" style="color:#E65100">Action Verbs</div><div class="lie">→ <strong>Cut, pour, stir, boil, add, mix</strong></div></div></li>
+          <li class="li" style="background:#E3F2FD"><span class="lio">🔗</span><div><div class="lil" style="color:#1565C0">Connectors / Sequencers</div><div class="lie">→ <strong>First, then, next, after that, finally</strong></div></div></li>
+          <li class="li" style="background:#F3E5F5"><span class="lio">🕐</span><div><div class="lil" style="color:#6A1B9A">Simple Present Tense</div><div class="lie">→ Menggunakan bentuk kata kerja dasar</div></div></li>
+        </ul>
+      </div>
+      <!-- RIGHT -->
+      <div class="cc aU" style="animation-delay:.15s">
+        <div class="cch">
+          <div class="cco" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2)">🧱</div>
+          <div><div class="cch2" style="color:#E65100">B. Generic Structure</div><div class="chs">Struktur Teks</div></div>
+        </div>
+        <ul class="stl">
+          <li class="sti" style="background:#FFF3E0">
+            <div class="stn" style="background:linear-gradient(135deg,#FF6B35,#E85D04)">1</div>
+            <div><div class="stt">📌 Goal (Tujuan)</div><div class="std">Menjelaskan apa yang akan dibuat atau dilakukan. Biasanya berupa judul atau pernyataan awal.</div><div class="ste">Contoh: "How to Make Instant Noodles"</div></div>
+          </li>
+          <li class="sti" style="background:#E8F5E9">
+            <div class="stn" style="background:linear-gradient(135deg,#4CAF50,#2E7D32)">2</div>
+            <div><div class="stt">🧺 Materials <span style="color:#999;font-size:.9em;font-weight:400">(opsional)</span></div><div class="std">Daftar bahan atau alat yang dibutuhkan. Tidak selalu ada dalam setiap teks prosedur.</div><div class="ste">Contoh: "Ingredients: 1 pack of noodles, water"</div></div>
+          </li>
+          <li class="sti" style="background:#E3F2FD">
+            <div class="stn" style="background:linear-gradient(135deg,#2196F3,#1565C0)">3</div>
+            <div><div class="stt">📋 Steps (Langkah-langkah)</div><div class="std">Urutan instruksi yang harus dilakukan secara berurutan. Ini adalah bagian terpenting dari procedure text.</div><div class="ste">Contoh: "1. Boil water... 2. Add noodles..."</div></div>
+          </li>
+        </ul>
+        <div class="ms">
+          <div class="mf">
+            <span class="mc" style="background:#FF6B35">GOAL</span>
+            <span style="font-size:clamp(14px,2vh,24px)">→</span>
+            <span class="mc" style="background:#4CAF50">MATERIALS</span>
+            <span style="font-size:clamp(14px,2vh,24px)">→</span>
+            <span class="mc" style="background:#2196F3">STEPS</span>
+          </div>
+          <p>Selalu dalam urutan yang <span>sistematis</span> dan <span>berurutan!</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nb">
+    <button class="np" onclick="go(1)">◀</button>
+    <span class="nl">Halaman 2 dari 6</span>
+    <div id="d2" style="display:flex;gap:.8vw"></div>
+    <button class="nn" onclick="go(3)">▶</button>
+  </div>
+</div>
+
+
+<!-- ===== S3 CONTOH ===== -->
+<div class="sc" id="s3">
+  <div class="fd" style="top:5%;left:1.5%;opacity:.18">🍜</div>
+  <div class="fd" style="bottom:12%;right:2%;opacity:.18">📝</div>
+  <div class="s3c">
+    <div class="sh aD">
+      <span class="sb" style="background:linear-gradient(135deg,#2E7D32,#388E3C)">📝 CONTOH SOAL</span>
+      <div class="sh1" style="color:#1B5E20">Worked Example: How to Make Instant Noodles</div>
+    </div>
+    <div class="exg">
+      <div class="rc">
+        <div class="rtr"><div class="re">🍜</div><div><div class="rh2">How to Make Instant Noodles</div><div class="rs">Procedure Text — Worked Example</div></div></div>
+        <div><div class="sl" style="color:#E65100">🧺 Ingredients:</div><div class="ir"><span class="ic">📦 A pack of instant noodles</span><span class="ic">💧 Water</span><span class="ic">🧂 Seasoning</span></div></div>
+        <div><div class="sl" style="color:#1565C0">📋 Steps:</div>
+          <div class="stps">
+            <div class="si"><div class="sn">1</div><div class="stx"><strong>Boil</strong> water in a pot.</div></div>
+            <div class="si"><div class="sn">2</div><div class="stx"><strong>Add</strong> the noodles into the boiling water.</div></div>
+            <div class="si"><div class="sn">3</div><div class="stx"><strong>Cook</strong> for 3 minutes.</div></div>
+            <div class="si"><div class="sn">4</div><div class="stx"><strong>Add</strong> seasoning.</div></div>
+            <div class="si"><div class="sn">5</div><div class="stx"><strong>Stir</strong> well and <strong>serve</strong>.</div></div>
+          </div>
+        </div>
+        <div class="ast">
+          <div class="asth">🔍 Analisis Teks</div>
+          <div class="acg">
+            <div class="ac"><div class="acl">Action Verbs</div><div class="acv">Boil, Add, Cook, Stir, Serve</div></div>
+            <div class="ac"><div class="acl">Tense</div><div class="acv">Simple Present</div></div>
+            <div class="ac"><div class="acl">Kalimat</div><div class="acv">Imperative</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="qc">
+        <div class="qh">❓ Questions &amp; Answers</div>
+        <div class="qhi">💡 <strong>Klik</strong> kotak jawaban untuk reveal / sembunyikan!</div>
+        <div class="qi"><div class="qt">1. What is the <strong>goal</strong> of the text?</div><div class="qa hid" onclick="toggleA(this)">✅ To make instant noodles</div></div>
+        <div class="qi"><div class="qt">2. Mention <strong>two action verbs</strong> from the text!</div><div class="qa hid" onclick="toggleA(this)">✅ Boil, add, cook, stir, serve (any two)</div></div>
+        <div class="qi"><div class="qt">3. What should you do <strong>after boiling</strong> the water?</div><div class="qa hid" onclick="toggleA(this)">✅ Add the noodles into the boiling water</div></div>
+        <div class="ks">
+          <div class="ksh">🌟 Key Language Points</div>
+          <div class="kis">
+            <div class="ki" style="border-color:#FF6B35"><div class="kil" style="color:#E65100">📌 Imperative:</div><div class="kie">"Boil water..." — "Add the noodles..." — "Stir well..."</div></div>
+            <div class="ki" style="border-color:#4CAF50"><div class="kil" style="color:#2E7D32">🔗 Sequencer:</div><div class="kie">Implied by numbered steps (1, 2, 3, 4, 5)</div></div>
+            <div class="ki" style="border-color:#9C27B0"><div class="kil" style="color:#6A1B9A">⚡ Generic Structure:</div>
+              <div style="margin-top:.2vh;font-size:clamp(9px,1.15vh,13px);display:flex;gap:.4vw;flex-wrap:wrap;align-items:center">
+                <span style="background:#FF6B35;color:#fff;border-radius:.6vh;padding:.2vh .7vw;font-weight:800">GOAL</span>Title
+                <span style="background:#4CAF50;color:#fff;border-radius:.6vh;padding:.2vh .7vw;font-weight:800">MATERIALS</span>Ingredients
+                <span style="background:#2196F3;color:#fff;border-radius:.6vh;padding:.2vh .7vw;font-weight:800">STEPS</span>Steps 1–5
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nb">
+    <button class="np" onclick="go(2)">◀</button>
+    <span class="nl">Halaman 3 dari 6</span>
+    <div id="d3" style="display:flex;gap:.8vw"></div>
+    <button class="nn" onclick="go(4)">▶</button>
+  </div>
+</div>
+
+
+<!-- ===== S4 QUIZ ===== -->
+<div class="sc" id="s4">
+  <div class="fd" style="top:5%;left:1.5%;opacity:.18">🧠</div>
+  <div class="fd" style="bottom:12%;right:2%;opacity:.18">🎯</div>
+  <div class="s4c">
+    <div class="sh aD">
+      <span class="sb" style="background:linear-gradient(135deg,#E65100,#FF6B35)">🟢 LATIHAN A</span>
+      <div class="sh1" style="color:#BF360C">Pilihan Ganda — Multiple Choice</div>
+    </div>
+    <div class="qw aU">
+      <div class="pr">
+        <div class="pb"><div class="pf" id="pBar" style="width:20%"></div></div>
+        <div class="pt" id="pTxt">1 / 5</div>
+        <div class="sb2" id="sBox">⭐ 0 / 5</div>
+      </div>
+      <div class="qcard">
+        <div class="qbg" id="qBdg">📝 Soal 1 dari 5</div>
+        <div class="qq"  id="qQst">—</div>
+        <div class="qos" id="qOps"></div>
+        <div class="qfb" id="qFb"></div>
+        <div class="qct">
+          <button class="qb s" id="bPrev" onclick="prevQ()" disabled>◀ Sebelumnya</button>
+          <button class="qb p" id="bNext" onclick="nextQ()" disabled>Selanjutnya ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nb">
+    <button class="np" onclick="go(3)">◀</button>
+    <span class="nl">Halaman 4 dari 6</span>
+    <div id="d4" style="display:flex;gap:.8vw"></div>
+    <button class="nn" onclick="go(5)">▶</button>
+  </div>
+</div>
+
+
+<!-- ===== S5 ISIAN ===== -->
+<div class="sc" id="s5">
+  <div class="fd" style="top:5%;left:1.5%;opacity:.18">✍️</div>
+  <div class="fd" style="bottom:12%;right:2%;opacity:.18">🌟</div>
+  <div class="s5c">
+    <div class="sh aD">
+      <span class="sb" style="background:linear-gradient(135deg,#6A1B9A,#9C27B0)">🟡 LATIHAN B + BONUS</span>
+      <div class="sh1" style="color:#4A148C">Isian Singkat &amp; Mini Project</div>
+    </div>
+    <div class="fg">
+      <div class="fc aU">
+        <div class="fh2">🟡 B. Isian Singkat <span style="font-size:.7em;color:#999;font-family:'Nunito',sans-serif;font-weight:700">— Short Answer</span></div>
+        <div class="fhi">✍️ Isi kolom jawaban, lalu klik <strong>Cek Jawaban</strong>!</div>
+        <div class="fis">
+          <div class="fi"><div class="fn">1</div><div class="ft">Write one example of an <strong>action verb</strong>:</div><input class="fin" id="f1" placeholder="e.g. boil" type="text"></div>
+          <div class="fi"><div class="fn">2</div><div class="ft">The first part of procedure text is called:</div><input class="fin" id="f2" placeholder="answer..." type="text"></div>
+          <div class="fi"><div class="fn">3</div><div class="ft">Mention one <strong>sequencing word</strong>:</div><input class="fin" id="f3" placeholder="e.g. first" type="text"></div>
+          <div class="fi"><div class="fn">4</div><div class="ft">"Cut the vegetables!" is an example of _____ sentence:</div><input class="fin" id="f4" placeholder="answer..." type="text"></div>
+          <div class="fi"><div class="fn">5</div><div class="ft">Procedure text uses _____ tense:</div><input class="fin" id="f5" placeholder="answer..." type="text"></div>
+        </div>
+        <div class="fbs">
+          <button class="cb" onclick="chkFill()">✅ Cek Jawaban</button>
+          <button class="rb" onclick="rstFill()">🔄 Reset</button>
+        </div>
+        <div class="fr" id="fRes"></div>
+      </div>
+      <div class="pc aU" style="animation-delay:.15s">
+        <div class="ph2">🎯 BONUS — Mini Project</div>
+        <div class="ps">How to make your favorite drink ☕🧃🍵</div>
+        <div class="pd">Buatlah procedure text sederhana tentang minuman favoritmu!</div>
+        <ul class="cl">
+          <li class="ci2">✅ Minimal 5 langkah (steps)</li>
+          <li class="ci2">✅ Gunakan <strong>sequencing words</strong> (First, Then, Next, Finally)</li>
+          <li class="ci2">✅ Gunakan <strong>imperative sentences</strong></li>
+        </ul>
+        <textarea class="pta" id="pTa" placeholder="Write your procedure text here...&#10;&#10;How to Make ___________&#10;&#10;Ingredients:&#10;- ...&#10;&#10;Steps:&#10;First, ...&#10;Then, ...&#10;Next, ...&#10;After that, ...&#10;Finally, ..."></textarea>
+        <div class="pbs">
+          <button class="sbb" onclick="subProj()">📤 Submit &amp; Lihat Feedback</button>
+          <button class="clb" onclick="clrProj()">🗑️</button>
+        </div>
+        <div class="pf2" id="pFb"></div>
+      </div>
+    </div>
+  </div>
+  <div class="nb">
+    <button class="np" onclick="go(4)">◀</button>
+    <span class="nl">Halaman 5 dari 6</span>
+    <div id="d5" style="display:flex;gap:.8vw"></div>
+    <button class="nn" onclick="go(6)">▶</button>
+  </div>
+</div>
+
+
+<!-- ===== S6 SUMMARY ===== -->
+<div class="sc" id="s6">
+  <div class="fd" style="top:6%;left:3%;opacity:.12;font-size:clamp(28px,6vh,70px)">🎊</div>
+  <div class="fd" style="bottom:14%;right:3%;opacity:.12;font-size:clamp(28px,6vh,70px);animation-delay:1s">🎉</div>
+  <div class="fd" style="top:20%;right:8%;opacity:.12;font-size:clamp(22px,5vh,58px);animation-delay:2s">⭐</div>
+  <div class="s6c">
+    <div class="s6em">🎓</div>
+    <div class="s6h1">Selamat! Kamu <span>Berhasil!</span></div>
+    <div class="s6sb">Kamu telah menyelesaikan pembelajaran <strong>Procedure Text</strong> 🎊</div>
+    <div class="scs">
+      <div class="sck"><div class="scn">📖</div><div class="scl">Materi Dipelajari</div><div class="scno">Pengertian, Struktur, Features</div></div>
+      <div class="sck"><div class="scn" id="fScore">0/5</div><div class="scl">Skor Pilihan Ganda</div><div class="scno">Multiple Choice Quiz</div></div>
+      <div class="sck"><div class="scn">✍️</div><div class="scl">Isian Singkat</div><div class="scno">Short Answer Exercise</div></div>
+      <div class="sck"><div class="scn">🏆</div><div class="scl">Mini Project</div><div class="scno">Your procedure text</div></div>
+    </div>
+    <div class="twr">
+      <div class="tw" style="background:rgba(255,107,53,.2);border-color:rgba(255,107,53,.4)">📌 Goal → Materials → Steps</div>
+      <div class="tw" style="background:rgba(76,175,80,.2);border-color:rgba(76,175,80,.4)">⚡ Imperative Sentences</div>
+      <div class="tw" style="background:rgba(33,150,243,.2);border-color:rgba(33,150,243,.4)">🔗 First, Then, Next, Finally</div>
+      <div class="tw" style="background:rgba(156,39,176,.2);border-color:rgba(156,39,176,.4)">🕐 Simple Present Tense</div>
+    </div>
+    <button class="rbs" onclick="go(1)">🔄 Ulangi Pembelajaran</button>
+  </div>
+  <div class="nb">
+    <button class="np" onclick="go(5)">◀</button>
+    <span class="nl">Halaman 6 dari 6</span>
+  </div>
+</div>
+
+
+<script>
+/* FULLSCREEN */
+function toggleFS() {
+  const b = document.getElementById('fsB');
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(()=>{});
+    b.textContent = '✕ Exit Fullscreen';
+  } else {
+    document.exitFullscreen();
+    b.textContent = '⛶ Fullscreen';
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) document.getElementById('fsB').textContent = '⛶ Fullscreen';
+});
+
+/* NAVIGATION */
+let cur = 1;
+const TOT = 6;
+const ICO = ['🏠','📖','🍜','🎯','✍️','🏆'];
+const NM  = ['Intro','Materi','Contoh','Quiz','Latihan','Summary'];
+
+function go(n) {
+  document.getElementById('s'+cur).classList.remove('on');
+  cur = n;
+  document.getElementById('s'+cur).classList.add('on');
+  dots();
+  if (n===4) rQ();
+  if (n===6) document.getElementById('fScore').textContent = score+'/'+Qs.length;
+}
+function dots() {
+  for (let s=1; s<=TOT; s++) {
+    const c = document.getElementById('d'+s);
+    if (!c) continue;
+    c.innerHTML = '';
+    for (let i=1; i<=TOT; i++) {
+      const d = document.createElement('div');
+      d.className = 'nd' + (i===cur?' on':'');
+      d.textContent = ICO[i-1]; d.title = NM[i-1];
+      d.onclick = () => go(i);
+      c.appendChild(d);
+    }
+  }
+}
+dots();
+
+/* ANSWER TOGGLE */
+function toggleA(el) { el.classList.toggle('hid'); }
+
+/* QUIZ */
+const Qs = [
+  { q:"What is the purpose of a procedure text?",
+    o:["To describe something","To tell a story","To explain how to do something","To entertain readers"], a:2 },
+  { q:"Which of the following is an imperative sentence?",
+    o:["She is cooking noodles","Cook the noodles for 5 minutes","I cooked noodles yesterday","They cook noodles"], a:1 },
+  { q:"Which word is a sequencing word?",
+    o:["Beautiful","Quickly","Then","Blue"], a:2 },
+  { q:'The "Materials" section usually contains...',
+    o:["Steps","Tools and ingredients","Conclusion","Opinion"], a:1 },
+  { q:"Arrange the correct order of making tea:\n① Pour the tea  ② Boil water  ③ Add sugar  ④ Stir well",
+    o:["② → ① → ③ → ④","① → ② → ③ → ④","② → ③ → ① → ④","③ → ② → ① → ④"], a:0 }
+];
+const L = ['A','B','C','D'];
+let cQ=0, score=0, ans=new Array(Qs.length).fill(null);
+
+function rQ() {
+  const q = Qs[cQ];
+  document.getElementById('qBdg').textContent = `📝 Soal ${cQ+1} dari ${Qs.length}`;
+  document.getElementById('qQst').textContent = q.q;
+  document.getElementById('pBar').style.width  = ((cQ+1)/Qs.length*100)+'%';
+  document.getElementById('pTxt').textContent  = `${cQ+1} / ${Qs.length}`;
+  document.getElementById('sBox').textContent  = `⭐ ${score} / ${Qs.length}`;
+
+  const ops = document.getElementById('qOps');
+  ops.innerHTML = '';
+  q.o.forEach((o,i) => {
+    const b = document.createElement('button');
+    b.className = 'qo';
+    const a = ans[cQ];
+    if (a!==null) {
+      if (i===q.a) b.classList.add('ok');
+      else if (i===a) b.classList.add('no');
+      b.classList.add('dis');
+    }
+    b.innerHTML = `<span class="ol">${L[i]}</span>${o}`;
+    b.onclick = () => pick(i);
+    ops.appendChild(b);
+  });
+
+  const fb = document.getElementById('qFb');
+  if (ans[cQ]!==null) {
+    const ok = ans[cQ]===q.a;
+    fb.className = 'qfb on '+(ok?'ok':'no');
+    fb.innerHTML = ok
+      ? `✅ Benar! Jawabannya: <strong>${L[q.a]}. ${q.o[q.a]}</strong>`
+      : `❌ Kurang tepat. Jawaban yang benar: <strong>${L[q.a]}. ${q.o[q.a]}</strong>`;
+  } else { fb.className='qfb'; fb.innerHTML=''; }
+
+  document.getElementById('bPrev').disabled = cQ===0;
+  document.getElementById('bNext').disabled = ans[cQ]===null;
+  document.getElementById('bNext').textContent = cQ===Qs.length-1 ? '🏁 Selesai' : 'Selanjutnya ▶';
+}
+function pick(i) {
+  if (ans[cQ]!==null) return;
+  if (i===Qs[cQ].a) score++;
+  ans[cQ]=i; rQ();
+}
+function nextQ() { cQ<Qs.length-1 ? (cQ++,rQ()) : go(5); }
+function prevQ() { if(cQ>0){cQ--;rQ();} }
+
+/* FILL IN THE BLANK */
+const FA = {
+  1:['boil','add','cook','stir','cut','pour','mix','fry','bake','wash','peel','slice','chop','put','serve','heat','grill'],
+  2:['goal'],
+  3:['first','then','next','finally','after','lastly','second','third'],
+  4:['imperative'],
+  5:['simple present','present']
+};
+function chkFill() {
+  let ok=0, html='<div style="font-weight:800;margin-bottom:.4vh">📊 Hasil Jawaban:</div>';
+  for(let i=1;i<=5;i++){
+    const v=document.getElementById('f'+i).value.trim().toLowerCase();
+    const pass=FA[i].some(a=>v.includes(a)||(a.includes(v)&&v.length>=3));
+    ok+=pass?1:0;
+    html+=`<div>${pass?'✅':'❌'} No.${i}: ${pass?'Benar! ('+v+')':'Contoh: <strong>'+FA[i][0]+'</strong>'}</div>`;
+  }
+  html+=`<div style="font-weight:800;margin-top:.5vh;border-top:1px solid rgba(0,0,0,.1);padding-top:.4vh">🎯 Skor: ${ok}/5</div>`;
+  const r=document.getElementById('fRes');
+  r.innerHTML=html; r.className='fr on';
+  r.style.cssText+=`;background:${ok>=4?'#E8F5E9':ok>=2?'#FFF9C4':'#FFEBEE'};color:${ok>=4?'#2E7D32':ok>=2?'#795548':'#C62828'};border:2px solid ${ok>=4?'#A5D6A7':ok>=2?'#FFD54F':'#EF9A9A'};padding:.8vh 1.2vw;border-radius:1.2vh`;
+}
+function rstFill() {
+  for(let i=1;i<=5;i++) document.getElementById('f'+i).value='';
+  const r=document.getElementById('fRes'); r.className='fr'; r.innerHTML='';
+}
+
+/* MINI PROJECT */
+function subProj() {
+  const t=document.getElementById('pTa').value.trim();
+  const fb=document.getElementById('pFb');
+  if(!t||t.length<40){
+    fb.className='pf2 on'; fb.style.cssText='display:block;background:#FFEBEE;color:#C62828;border-left:5px solid #F44336;padding:.8vh 1.2vw;border-radius:1.2vh';
+    fb.innerHTML='⚠️ Silakan tulis procedure text kamu terlebih dahulu!'; return;
+  }
+  const seq=/first|then|next|after|finally|lastly/i.test(t);
+  const imp=/boil|add|mix|stir|pour|cut|put|serve|heat|wash|peel|slice|chop|cook|bake|fry|blend|squeeze|prepare|place|remove/i.test(t);
+  const stp=(t.match(/\d+\.|first|then|next|after|finally/gi)||[]).length;
+  const sp=(stp>=3?1:0)+(seq?1:0)+(imp?1:0);
+  let msg='🎉 Procedure text kamu sudah diterima!<br>';
+  msg+=`<br>${stp>=3?'✅':'⚠️'} Langkah-langkah: ${stp>=3?'Lengkap!':'Tambah minimal 5 langkah'}`;
+  msg+=`<br>${seq?'✅':'⚠️'} Sequencing words: ${seq?'Ditemukan!':'Tambahkan First, Then, Next, Finally'}`;
+  msg+=`<br>${imp?'✅':'⚠️'} Imperative: ${imp?'Digunakan!':'Mulai kalimat dengan action verb'}`;
+  msg+=`<br><br>⭐ Kriteria terpenuhi: <strong>${sp}/3</strong>`;
+  fb.className='pf2 on';
+  fb.style.cssText=`display:block;background:${sp===3?'#E8F5E9':sp===2?'#FFF9C4':'#FFF3E0'};color:${sp===3?'#2E7D32':sp===2?'#795548':'#E65100'};border-left:5px solid ${sp===3?'#4CAF50':sp===2?'#FFD54F':'#FF6B35'};padding:.8vh 1.2vw;border-radius:1.2vh`;
+  fb.innerHTML=msg;
+}
+function clrProj() {
+  document.getElementById('pTa').value='';
+  const fb=document.getElementById('pFb'); fb.className='pf2'; fb.style.display='none';
+}
+</script>
+</body>
+</html>
